@@ -2,7 +2,7 @@
     "name": "JIT Privacy Extension",
     "version": "1.0",
     "description": "JIT privacy plugin",
-    "permissions": ["storage", "activeTab"],
+    "permissions": ["storage", "activeTab", "tabs"],
     "background":{
         "scripts": ["main.js"],
         "persistent": false
