@@ -1,0 +1,70 @@
+html {
+    min-height: 400px;
+    min-width: 400px;
+    max-width:500px;
+    max-height:500px;
+}
+
+body {
+    background: rgb(2,0,36);
+    background: linear-gradient(138deg, rgba(2,0,36,1) 0%, rgba(76,9,121,1) 35%, rgba(0,212,255,1) 100%);
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    color: honeydew;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+p {
+    text-align: center;
+}
+
+button {
+    cursor: not-allowed;
+    margin: 5px;
+    border-radius: 5px;
+    padding: 10px;
+    transition: 0.3s;
+}
+
+button:hover {
+    box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+}
+
+.fields {
+    flex: auto;
+    flex-direction: column;
+    max-width: 330px;
+    padding: 10px
+}
+
+.bars {
+    margin: 10px;
+    border-radius: 5px;
+    padding: 10px;
+    transition: all 0.3s ease-in-out;
+}
+
+.bars:hover{
+    transform: scale(1.1);
+}
+
+.low {
+    width: 33%;
+    background: rgb(179,226,37);
+    background: linear-gradient(138deg, rgba(179,226,37,1) 0%, rgba(60,230,48,1) 47%, rgba(27,201,110,1) 77%);
+}
+
+.medium {
+    width: 66%;
+    background: rgb(226,137,37);
+    background: linear-gradient(138deg, rgba(226,137,37,1) 0%, rgba(221,230,48,1) 50%, rgba(143,201,27,1) 90%);
+}
+
+.high {
+    width: 100%;
+    background: rgb(226,37,37);
+    background: linear-gradient(138deg, rgba(226,37,37,1) 0%, rgba(230,110,48,1) 50%, rgba(201,145,27,1) 90%);
+}

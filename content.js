@@ -1,44 +1,46 @@
 
-const privacyFields = {
-    "fields": [
-        "password",
-        "pass",
-        "email",
-        "address",
-        "SSN",
-        "NIN",
-        "username",
-        "login"
-    ]
-};
-
 const port = chrome.runtime.connect({name: "form"});
     
 const forms = document.getElementsByTagName("form");
-const fieldsInForm = [];
 
 for (let i = 0; i < forms.length; i++){
-    forms[i].addEventListener("submit", (e) => {
+    forms[i].addEventListener("input", async (e) => {
         console.log("Event triggered");
-        e.preventDefault();
         const inputs = forms[i].getElementsByTagName("input");
+        const labels = forms[i].getElementsByTagName("label")
+        
+        const toPredict = {"keywords":[]};
+        
         for (let j = 0; j < inputs.length; j++){
-            for (let k = 0; k < privacyFields.fields.length; k++){
-                const objectToPush = {}
-                const pattern = new RegExp(privacyFields.fields[k]);
-                if (pattern.test(inputs[j].name) || pattern.test(inputs[j].id)){
-                    objectToPush[privacyFields.fields[k]] = inputs[j].value;
-                    fieldsInForm.push(objectToPush);
+            const input = inputs[j];
+            if (input.type === "hidden"){
+                continue;
+            }
+            let foundLabel = false;
+            for (let k = 0; k < labels.length; k++){
+                const label = labels[k];
+                if (label.htmlFor === input.id){
+                    toPredict.keywords.push(label.innerHTML);
+                    foundLabel = true;
                 }
             }
+            if (!foundLabel){
+                toPredict.keywords.push(input.placeholder);
+            }
         }
-        if (fieldsInForm.length !== 0)
-            console.log(fieldsInForm);
-            fieldsInForm.push({formID: i});
-            port.postMessage({forms:fieldsInForm});
-            fieldsInForm.splice(0, fieldsInForm.length);
+
+        if (toPredict.keywords.length !== 0)
+            console.log(toPredict);
+            toPredict["formID"] = i;
+            await port.postMessage(toPredict);
+        console.log("Await completed")
     });
 }
+
+port.onMessage.addListener((message)=>{
+    console.log(message);
+});
+
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) =>{
     console.log(request);
