@@ -11,6 +11,22 @@
       <div id="id1"></div>
       <!--<button id="submitButton">Send data!</button>-->
     </div>
+    <div class="buttonContainer">
+      <button id="toggle">Show tutorial</button>
+    </div>
+    <div id="explanation">
+      <h2>How this extension works</h2>
+      <p>This extension identifies any input field you interact with and classifies them according to three sensitivity levels.
+      The three sensitivity levels are defined below:</p>
+      <div class="fields">
+        <div class="bars low">Personal information that does not identify you uniquely (first name, date of birth, city...)</div>
+        <div class="bars medium">Personal information that identifies you uniquely(email, phone number, legal name...)</div>
+        <div class="bars high">GDPR Special Category Data (racial or ethnic origin, political opinions, religious/philosophical beliefs...)</div>
+      </div>
+      <p>As you browse the web and modify any input field, the icon of the extension will change colour to signal you the field with the highest sensitivity level.
+      The colours of the icon have the same meaning as the bars you see above</p>
+      <p>Please fill in <a href="https://forms.gle/hT713WM8ss7gVoKX9">the survey form </a></p>
+    </div>
     <script type="text/javascript" src="popup.js"></script>
   </body>
 </html>

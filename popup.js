@@ -4,9 +4,23 @@ sensitivityToClass = {
     3 : "high"
 };
 
+
+document.getElementById("toggle").addEventListener("click", (event) => {
+    console.log("Event ");
+    const tutorial = document.getElementById("explanation");
+    const toggle = document.getElementById("toggle");
+    if (tutorial.style.display === "none"){
+        toggle.innerHTML = "Hide tutorial";
+        tutorial.style.display = "inline";
+    } else {
+        toggle.innerHTML = "Show tutorial";
+        tutorial.style.display = "none";
+    }
+});
+
 window.onload = () => {
+    const tutorial = document.getElementById("explanation").style.display = "none";
     chrome.storage.sync.get("form", (data) => {
-        console.log(data);
         const id = document.getElementById("id1");
         if (data.form.keywords){
             for (let i = 0; i < data.form.keywords.length; i++){
