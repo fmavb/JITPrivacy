@@ -6,7 +6,6 @@ sensitivityToClass = {
 
 
 document.getElementById("toggle").addEventListener("click", (event) => {
-    console.log("Event ");
     const tutorial = document.getElementById("explanation");
     const toggle = document.getElementById("toggle");
     if (tutorial.style.display === "none"){
@@ -19,7 +18,9 @@ document.getElementById("toggle").addEventListener("click", (event) => {
 });
 
 window.onload = () => {
-    const tutorial = document.getElementById("explanation").style.display = "none";
+    document.getElementById("loading").style.display = "none";
+    document.getElementById("explanation").style.display = "none";
+    document.getElementById("noChange").style.display = "inline";
     chrome.storage.sync.get("form", (data) => {
         const id = document.getElementById("id1");
         if (data.form.keywords){
@@ -31,8 +32,8 @@ window.onload = () => {
                 html += "</div>\n";
                 id.innerHTML += html;
             }
+            document.getElementById("noChange").style.display = "none";
         }
-        document.getElementById("noChange").style.display = "none";
     });
 }
 
@@ -48,21 +49,32 @@ chrome.storage.onChanged.addListener((changes, areaName) =>{
         chrome.storage.sync.get("form", (data) => {
             console.log(data);
             const id = document.getElementById("id1");
-            console.log(data.form.keywords);
-            for (let i = 0; i < data.form.keywords.length; i++){
-                let html = "<div class='bars ";
-                const field = data.form.keywords[i];
-                html += sensitivityToClass[field.prediction] + "'>";
-                html += field.word;
-                html += "</div>\n";
-                id.innerHTML += html;
+            if (data.form.keywords) {
+                for (let i = 0; i < data.form.keywords.length; i++){
+                    let html = "<div class='bars ";
+                    const field = data.form.keywords[i];
+                    html += sensitivityToClass[field.prediction] + "'>";
+                    html += field.word;
+                    html += "</div>\n";
+                    id.innerHTML += html;
+                }
+                document.getElementById("noChange").style.display = "none";
             }
-            document.getElementById("noChange").style.display = "none";
         });
     }
     else if (areaName === "sync" && changes.cleared){
+        console.log("Cleared");
+        console.log(changes.cleared);
         document.getElementById("noChange").style.display = "inline";
         document.getElementById("id1").innerHTML = "";
         chrome.storage.sync.set({cleared: false});
+    } else if (areaName === "sync" && changes.loading){
+        chrome.storage.sync.get("loading", (data) => {
+            if (data.loading){
+                document.getElementById("loading").style.display = "inline";
+            } else {
+                document.getElementById("loading").style.display = "none";
+            }
+        });
     }
 });
