@@ -5,7 +5,6 @@ const forms = document.getElementsByTagName("form");
 
 for (let i = 0; i < forms.length; i++){
     forms[i].addEventListener("input", async (e) => {
-        console.log("Event triggered");
         const inputs = forms[i].getElementsByTagName("input");
         const labels = forms[i].getElementsByTagName("label")
         
@@ -19,13 +18,11 @@ for (let i = 0; i < forms.length; i++){
             let foundLabel = false;
             for (let k = 0; k < labels.length; k++){
                 const label = labels[k];
-                if (label.htmlFor === input.id){
-                    toPredict.keywords.push(label.innerHTML);
-                    foundLabel = true;
-                }
+                !toPredict.keywords.includes(label.innerHTML) ? toPredict.keywords.push(label.innerHTML): false;
+                foundLabel = true;
             }
             if (!foundLabel){
-                toPredict.keywords.push(input.placeholder);
+                !toPredict.keywords.includes(input.placeholder) ? toPredict.keywords.push(input.placeholder) : false; 
             }
         }
 
