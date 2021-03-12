@@ -1,7 +1,7 @@
 {
     "name": "Real-Time Privacy Manager",
     "version": "1.0",
-    "description": "JIT privacy plugin",
+    "description": "Real-Time Privacy Manager",
     "permissions": ["storage", "activeTab", "tabs"],
     "background":{
         "scripts": ["main.js"],

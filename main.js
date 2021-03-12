@@ -1,6 +1,6 @@
 const chromeRuntime = chrome.runtime;
 const localhost = "http://localhost:8000/";
-const prod = "https://ontologyclassifierapi.azurewebsites.net"
+const prod = "https://ontologyclassifierapi.azurewebsites.net/"
 
 chromeRuntime.onInstalled.addListener(()=>{
     chrome.tabs.executeScript({
@@ -21,7 +21,7 @@ chromeRuntime.onConnect.addListener((incomingPort) => {
     if (incomingPort.name == "form"){
         incomingPort.onMessage.addListener( async (message)=>{
             chrome.storage.sync.set({loading: true});
-            const response = await fetch(prod+"search/", {
+            const response = await fetch(prod + "search/", {
                 method: "POST",
                 body: JSON.stringify(message),
             });
