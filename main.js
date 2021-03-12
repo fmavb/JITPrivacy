@@ -1,6 +1,6 @@
 const chromeRuntime = chrome.runtime;
 const localhost = "http://localhost:8000/";
-const prod = "https://sensitivity-classifier.herokuapp.com/"
+const prod = "https://ontologyclassifierapi.azurewebsites.net"
 
 chromeRuntime.onInstalled.addListener(()=>{
     chrome.tabs.executeScript({
