@@ -1,61 +1,38 @@
 
-const port = chrome.runtime.connect({name: "form"});
-    
+const port = chrome.runtime.connect({ name: "form" });
+
 const forms = document.getElementsByTagName("form");
 
-for (let i = 0; i < forms.length; i++){
-    forms[i].addEventListener("input", async (e) => {
+document.addEventListener("DOMNodeInserted", (e) => {
+    for (let i = 0; i < forms.length; i++) {
         const inputs = forms[i].getElementsByTagName("input");
-        const labels = forms[i].getElementsByTagName("label")
-        
-        const toPredict = {"keywords":[]};
-        
-        for (let j = 0; j < inputs.length; j++){
-            const input = inputs[j];
-            if (input.type === "hidden"){
-                continue;
-            }
-            let foundLabel = false;
-            for (let k = 0; k < labels.length; k++){
-                const label = labels[k];
-                !toPredict.keywords.includes(label.innerHTML) ? toPredict.keywords.push(label.innerHTML): false;
-                foundLabel = true;
-            }
-            if (!foundLabel){
-                !toPredict.keywords.includes(input.placeholder) ? toPredict.keywords.push(input.placeholder) : false; 
-            }
+        for (let j = 0; j < inputs.length; j++) {
+            inputs[j].oninput = async (e) => {
+                console.log("Event triggered");
+                const labels = forms[i].getElementsByTagName("label");
+                const toPredict = { "keywords": [] };
+                if (inputs[j].type != "hidden") {
+                    let foundLabel = false;
+                    for (let k = 0; k < labels.length; k++) {
+                        const label = labels[k];
+                        const strippedString = label.innerHTML.replace(/(<([^>]+)>)/gi, "");
+                        !toPredict.keywords.includes(strippedString) ? toPredict.keywords.push(strippedString) : false;
+                        foundLabel = true;
+                    }
+                    if (!foundLabel) {
+                        for (let l = 0; l < inputs.length; l++) {
+                            !toPredict.keywords.includes(inputs[l].placeholder) ? toPredict.keywords.push(inputs[l].placeholder) : false;
+                        }
+                    }
+                    if (toPredict.keywords.length !== 0) {
+                        console.log(toPredict);
+                        toPredict["formID"] = i;
+                        await port.postMessage(toPredict);
+                    }
+                }
+            };
         }
-
-        if (toPredict.keywords.length !== 0)
-            console.log(toPredict);
-            toPredict["formID"] = i;
-            await port.postMessage(toPredict);
-        console.log("Await completed")
-    });
-}
-
-port.onMessage.addListener((message)=>{
-    console.log(message);
+    }
 });
 
-
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) =>{
-    console.log(request);
-});
-
-/*
-for (let i = 0; i < forms.length; i++){
-    const inputs = forms[i].getElementsByTagName("input");
-    for (let j = 0; j < inputs.length; j++){
-        for (let k = 0; k < privacyFields.fields.length; k++){
-            const pattern = new RegExp(privacyFields.fields[k]);
-            if (pattern.test(inputs[j].name) || pattern.test(inputs[j].id)){
-                fieldsInForm.push(privacyFields.fields[k]);
-            }
-        }
-  }
-}*/
-
-/*if (fieldsInForm.length !== 0)
-    port.postMessage({forms:fieldsInForm});*/
 
