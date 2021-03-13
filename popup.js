@@ -4,6 +4,13 @@ sensitivityToClass = {
     3 : "high"
 };
 
+async function getStorage(fetchValue){
+    new Promise((resolve, reject) => {
+        chrome.storage.sync.get(fetchValue, (value) => {
+            resolve(value);
+        });
+    });
+}
 
 document.getElementById("toggle").addEventListener("click", (event) => {
     const tutorial = document.getElementById("explanation");
@@ -21,17 +28,29 @@ window.onload = () => {
     document.getElementById("loading").style.display = "none";
     document.getElementById("explanation").style.display = "none";
     document.getElementById("noChange").style.display = "inline";
-    chrome.storage.sync.get("form", (data) => {
+    chrome.storage.sync.get("form", async (data) => {
         const id = document.getElementById("id1");
+        let maxInputValue = await getStorage("maxInputValue") ? await getStorage("maxInputValue") : 16;
+
+        if (data.form.keywords.length > maxInputValue){
+            maxInputValue = data.form.keywords.length;
+            chrome.storage.sync.set({"maxInputValue": maxInputValue});
+        }
+
+        const maxScore = maxInputValue + 3 * maxInputValue;
+        let score = data.form.keywords.length;
+
         if (data.form.keywords){
             for (let i = 0; i < data.form.keywords.length; i++){
                 let html = "<div class='bars ";
                 const field = data.form.keywords[i];
+                score += field.prediction
                 html += sensitivityToClass[field.prediction] + "'>";
                 html += field.word;
                 html += "</div>\n";
                 id.innerHTML += html;
             }
+            document.getElementById("sensitivityScore").innerHTML = `Sensitivity Score: ${Math.round((score/maxScore)*100)}%`;
             document.getElementById("noChange").style.display = "none";
         }
     });

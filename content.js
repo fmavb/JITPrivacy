@@ -8,7 +8,6 @@ document.addEventListener("DOMNodeInserted", (e) => {
         const inputs = forms[i].getElementsByTagName("input");
         for (let j = 0; j < inputs.length; j++) {
             inputs[j].oninput = async (e) => {
-                console.log("Event triggered");
                 const labels = forms[i].getElementsByTagName("label");
                 const toPredict = { "keywords": [] };
                 if (inputs[j].type != "hidden") {
@@ -25,7 +24,6 @@ document.addEventListener("DOMNodeInserted", (e) => {
                         }
                     }
                     if (toPredict.keywords.length !== 0) {
-                        console.log(toPredict);
                         toPredict["formID"] = i;
                         await port.postMessage(toPredict);
                     }
