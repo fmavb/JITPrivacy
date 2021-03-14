@@ -28,19 +28,21 @@ window.onload = () => {
     document.getElementById("loading").style.display = "none";
     document.getElementById("explanation").style.display = "none";
     document.getElementById("noChange").style.display = "inline";
+    document.getElementById("progressContainer").style.display = "none";
     chrome.storage.sync.get("form", async (data) => {
         const id = document.getElementById("id1");
         let maxInputValue = await getStorage("maxInputValue") ? await getStorage("maxInputValue") : 16;
-
-        if (data.form.keywords.length > maxInputValue){
-            maxInputValue = data.form.keywords.length;
-            chrome.storage.sync.set({"maxInputValue": maxInputValue});
-        }
-
-        const maxScore = maxInputValue + 3 * maxInputValue;
-        let score = data.form.keywords.length;
+        
 
         if (data.form.keywords){
+            
+            if (data.form.keywords.length > maxInputValue){
+                maxInputValue = data.form.keywords.length;
+                chrome.storage.sync.set({"maxInputValue": maxInputValue});
+            }
+    
+            const maxScore = maxInputValue + 3 * maxInputValue;
+            let score = data.form.keywords.length;
             for (let i = 0; i < data.form.keywords.length; i++){
                 let html = "<div class='bars ";
                 const field = data.form.keywords[i];
@@ -50,7 +52,12 @@ window.onload = () => {
                 html += "</div>\n";
                 id.innerHTML += html;
             }
-            document.getElementById("sensitivityScore").innerHTML = `Sensitivity Score: ${Math.round((score/maxScore)*100)}%`;
+            const percentage = Math.round((score/maxScore)*100);
+            document.getElementById("sensitivityScore").innerHTML = `Sensitivity Score: ${percentage}%`;
+            document.getElementById("progressContainer").style.display = "block";
+            const progress = document.getElementById("progress");
+            document.getElementById("progressText").innerHTML = `${percentage}%`;
+            progress.style.width = `${score}%`;
             document.getElementById("noChange").style.display = "none";
         }
     });
@@ -65,18 +72,32 @@ window.onload = () => {
 
 chrome.storage.onChanged.addListener((changes, areaName) =>{
     if (areaName === "sync" && changes.form){
-        chrome.storage.sync.get("form", (data) => {
-            console.log(data);
+        chrome.storage.sync.get("form", async (data) => {
             const id = document.getElementById("id1");
+            let maxInputValue = await getStorage("maxInputValue") ? await getStorage("maxInputValue") : 16;
+
             if (data.form.keywords) {
+                if (data.form.keywords.length > maxInputValue){
+                    maxInputValue = data.form.keywords.length;
+                    chrome.storage.sync.set({"maxInputValue": maxInputValue});
+                }
+                const maxScore = maxInputValue + 3 * maxInputValue;
+                let score = data.form.keywords.length;
                 for (let i = 0; i < data.form.keywords.length; i++){
                     let html = "<div class='bars ";
                     const field = data.form.keywords[i];
+                    score += field.prediction
                     html += sensitivityToClass[field.prediction] + "'>";
                     html += field.word;
                     html += "</div>\n";
                     id.innerHTML += html;
                 }
+                const percentage = Math.round((score/maxScore)*100);
+                document.getElementById("sensitivityScore").innerHTML = `Sensitivity Score: ${percentage}%`;
+                document.getElementById("progressContainer").style.display = "block";
+                const progress = document.getElementById("progress");
+                document.getElementById("progressText").innerHTML = `${percentage}%`;
+                progress.style.width = `${score}%`;
                 document.getElementById("noChange").style.display = "none";
             }
         });
