@@ -17,15 +17,15 @@ const background = {
 const port = chromeRuntime.connect({name: "background"});
 
 chromeRuntime.onConnect.addListener((incomingPort) => {
-    chrome.storage.sync.set({form:""});
+    chrome.storage.local.set({form:""});
     if (incomingPort.name == "form"){
         incomingPort.onMessage.addListener( async (message)=>{
-            chrome.storage.sync.set({loading: true});
+            chrome.storage.local.set({loading: true});
             const response = await fetch(prod + "search/", {
                 method: "POST",
                 body: JSON.stringify(message),
             });
-            chrome.storage.sync.set({loading: false});
+            chrome.storage.local.set({loading: false});
             message["keywords"] = await response.json();
             let max = 1;
             for (let i = 0; i < message.keywords.length; i++){
@@ -33,7 +33,7 @@ chromeRuntime.onConnect.addListener((incomingPort) => {
             }
             chrome.browserAction.setIcon({path: background[max]});
 
-            chrome.storage.sync.set({form: message});
+            chrome.storage.local.set({form: message});
             
         });
     }
@@ -41,5 +41,5 @@ chromeRuntime.onConnect.addListener((incomingPort) => {
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab)=>{
     chrome.browserAction.setIcon({path: {19: "icon-19.png", 38:"icon-38.png"}});
-    chrome.storage.sync.set({cleared: true});
+    chrome.storage.local.set({cleared: true});
 });

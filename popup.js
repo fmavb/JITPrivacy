@@ -6,7 +6,7 @@ sensitivityToClass = {
 
 async function getStorage(fetchValue){
     new Promise((resolve, reject) => {
-        chrome.storage.sync.get(fetchValue, (value) => {
+        chrome.storage.local.get(fetchValue, (value) => {
             resolve(value);
         });
     });
@@ -29,7 +29,7 @@ window.onload = () => {
     document.getElementById("explanation").style.display = "none";
     document.getElementById("noChange").style.display = "inline";
     document.getElementById("progressContainer").style.display = "none";
-    chrome.storage.sync.get("form", async (data) => {
+    chrome.storage.local.get("form", async (data) => {
         const id = document.getElementById("id1");
         let maxInputValue = await getStorage("maxInputValue") ? await getStorage("maxInputValue") : 16;
         
@@ -38,7 +38,7 @@ window.onload = () => {
             
             if (data.form.keywords.length > maxInputValue){
                 maxInputValue = data.form.keywords.length;
-                chrome.storage.sync.set({"maxInputValue": maxInputValue});
+                chrome.storage.local.set({"maxInputValue": maxInputValue});
             }
     
             const maxScore = maxInputValue + 3 * maxInputValue;
@@ -71,15 +71,15 @@ window.onload = () => {
 });*/
 
 chrome.storage.onChanged.addListener((changes, areaName) =>{
-    if (areaName === "sync" && changes.form){
-        chrome.storage.sync.get("form", async (data) => {
+    if (areaName === "local" && changes.form){
+        chrome.storage.local.get("form", async (data) => {
             const id = document.getElementById("id1");
             let maxInputValue = await getStorage("maxInputValue") ? await getStorage("maxInputValue") : 16;
 
             if (data.form.keywords) {
                 if (data.form.keywords.length > maxInputValue){
                     maxInputValue = data.form.keywords.length;
-                    chrome.storage.sync.set({"maxInputValue": maxInputValue});
+                    chrome.storage.local.set({"maxInputValue": maxInputValue});
                 }
                 const maxScore = maxInputValue + 3 * maxInputValue;
                 let score = data.form.keywords.length;
@@ -102,14 +102,14 @@ chrome.storage.onChanged.addListener((changes, areaName) =>{
             }
         });
     }
-    else if (areaName === "sync" && changes.cleared){
+    else if (areaName === "local" && changes.cleared){
         console.log("Cleared");
         console.log(changes.cleared);
         document.getElementById("noChange").style.display = "inline";
         document.getElementById("id1").innerHTML = "";
-        chrome.storage.sync.set({cleared: false});
-    } else if (areaName === "sync" && changes.loading){
-        chrome.storage.sync.get("loading", (data) => {
+        chrome.storage.local.set({cleared: false});
+    } else if (areaName === "local" && changes.loading){
+        chrome.storage.local.get("loading", (data) => {
             if (data.loading){
                 document.getElementById("loading").style.display = "inline";
             } else {
